@@ -38,7 +38,9 @@ def runCommand(command):
 def zsh():
     #autojump
     runCommandE("git clone git://github.com/wting/autojump.git")
-    runCommandE("./autojump/install.py")
+    os.chdir("./autojump")
+    runCommandE("./install.py")
+    os.chdir("/root/tmp")
     #autosuggestions
     runCommandE("git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions")
     #highlighting
