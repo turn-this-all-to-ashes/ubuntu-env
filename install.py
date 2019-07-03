@@ -155,7 +155,7 @@ if __name__ == "__main__" :
         os.chdir("/usr/local/include")
         runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
         os.chdir("/root/tmp")
-        runCommandE("curl -s https://raw.githubusercontent.com/turn-this-all-to-ashes/env_init/master/init-local.el > /root/.emacs.d/lisp/init-local.el")
+        runCommandE("curl -s https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/init-local.el > /root/.emacs.d/lisp/init-local.el")
         #em alias
         runCommandE("touch em")
         runCommandE('echo "#!/bin/sh" > em')
@@ -176,15 +176,39 @@ if __name__ == "__main__" :
     if shadowsocks == 1:
         runCommandE("pip install shadowsocks")
         runCommandE("mkdir -p /etc/shadowsocks/")
-        config = """{
-    "server":"www.ruinedit.cn",
-    "server_port":5508,
+        print("plz input server , port , passwd of ss(/etc/shadowsocks/ss.json)")
+        server = input("server address:\n")
+        port = input("server port:\n")
+        passwd = input("server passwd:\n")
+        content = '''{
+    "server":"''' + str(server).strip() + '''",
+    "server_port":''' + str(port).strip() + ''',
     "local_port":1080,
-    "password":"TjzcAlF%",
+    "password":"''' + str(passwd).strip()+'''",
     "timeout":600,
     "method":"aes-256-cfb"
 }
-"""
+'''
+
         file = open("/etc/shadowsocks/ss.json", "w")
-        file.write(config)
+        file.write(content)
         file.close()
+        runCommandE("cp /usr/local/lib/python2.7/dist-packages/shadowsocks/crypto/openssl.py /usr/local/lib/python2.7/dist-packages/shadowsocks/crypto/openssl.py.bak")
+        runCommandE('perl -p -i -e "s/cleanup/reset/g" /usr/local/lib/python2.7/dist-packages/shadowsocks/crypto/openssl.py')
+        file = open("/lib/systemd/system/ssc.service" , "w")
+        content = """[Unit]
+Description=test
+
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/sslocal -c /etc/shadowsocks/ss.json -d start
+ExecReload=/usr/local/bin/sslocal -c /etc/shadowsocks/ss.json -d restart
+ExecStop=/usr/local/bin/sslocal -c /etc/shadowsocks/ss.json -d stop
+
+[Install]
+WantedBy=multi-user.target"""
+        file.write(content)
+        file.close
+        runCommandE("systemctl daemon-reload")
+
+        print("usage:systemctl start/stop/reload ssc")
