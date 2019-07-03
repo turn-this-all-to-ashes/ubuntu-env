@@ -165,7 +165,7 @@ if __name__ == "__main__" :
         os.chdir("/usr/local/include")
         runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
         os.chdir("/root/tmp")
-        runCommandE("curl -s https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/init-local.el > /root/.emacs.d/lisp/init-local.el")
+        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/init-local.el -O - | cat > /root/.emacs.d/lisp/init-local.el")
         #em alias
         runCommandE("touch em")
         runCommandE('echo "#!/bin/sh" > em')
