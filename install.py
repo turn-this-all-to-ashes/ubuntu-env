@@ -26,6 +26,15 @@ def runCommandE(command):
         sys.exit()
     return (0 , p.stdout.readlines())
 
+def runCommand(command):
+    p = subprocess.Popen(command , shell = True , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p.wait()
+    if not p.returncode == 0:
+        print("run "+command + " failed: ")
+        for line in p.stdout.readlines():
+            print(line)
+    return (p.returncode , p.stdout.readlines())
+
 def zsh():
     #autojump
     runCommandE("git clone git://github.com/wting/autojump.git")
@@ -107,7 +116,8 @@ if __name__ == "__main__" :
                     num = 1
                 else:
                     runCommandE(str('echo "' + line + '" >> /etc/ssh/sshd_config'))
-        runCommandE("systemctl reload ssh")
+        runCommand("systemctl reload ssh")
+        runCommand("systemctl start ssh")
 
         #packages
         packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' , 'emacs-nox' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ]
