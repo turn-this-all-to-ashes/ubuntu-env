@@ -17,22 +17,18 @@ def installPackage(pm , packages):
     return 0
 
 def runCommandE(command):
-    p = subprocess.Popen(command , shell = True , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
         print("run "+command + " failed: ")
-        for line in p.stderr.readlines():
-            print(line)
         sys.exit()
     return (0 , p.stdout.readlines())
 
 def runCommand(command):
-    p = subprocess.Popen(command , shell = True , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
         print("run "+command + " failed: ")
-        for line in p.stderr.readlines():
-            print(line)
     return (p.returncode , p.stdout.readlines())
 
 def zsh():
