@@ -98,8 +98,14 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-[[ -s /root/.autojump/etc/profile.d/autojump.sh ]] && source /root/.autojump/etc/profile.d/autojump.sh
-autoload -U compinit && compinit -u
-
+alias tarx="tar zxvf"
+alias tarc="tar zcvf"
+alias sctl="systemctl"
+alias sctlstart="systemctl start"
+alias sctlreload="systemctl reload"
+alias sctlstop="systemctl stop"
+alias sctlrestart="systemctl restart"
+alias rmd="rm -rf"
+alias c="source cdls"
 bindkey '^P' history-substring-search-up
 bindkey '^N' history-substring-search-down

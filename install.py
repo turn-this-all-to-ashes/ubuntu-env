@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import sys
 import commands
@@ -8,35 +8,57 @@ import subprocess
 
 def installPackage(pm , packages):
     for package in packages:
+        print("")
         print(str(pm+package))
         p = subprocess.Popen(str(pm+package) , shell = True )
         p.wait()
         if not p.returncode == 0:
             print("install " + package+" failed")
+        print("")
     return 0
 
 def runCommandE(command):
+    print("")
     print(command)
     p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
         print("run "+command + " failed")
+        print("")
         sys.exit()
+    print("")
     return p.returncode
 
 def runCommand(command):
+    print("")
     print(command)
     p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
         print("run "+command + " failed")
+        print("")
+    print("")
     return p.returncode
 
 def zsh():
     #autojump
     runCommandE("git clone git://github.com/wting/autojump.git")
     os.chdir("./autojump")
-    runCommandE("./install.py")
+    (ret , output) = commands.getstatusoutput("./install.py")
+    if not ret == 0:
+        print(output)
+        print("install autojump failed")
+        sys.exit()
+    output= output.split('\n')
+    number= 0
+    autojumpconf= []
+    for i in range(0 , len(output)):
+        if number >1 :
+            break
+        index = -1 - i
+        if len(output[index]) > 5:
+            number += 1
+            autojumpconf.append(output[index])
     os.chdir("/root/tmp")
     #autosuggestions
     runCommandE("git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions")
@@ -46,6 +68,11 @@ def zsh():
     runCommandE("git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search")
     #.zshrc
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/zshrc -O - | cat > /root/.zshrc")
+    file = open("/root/.zshrc" , "a")
+    file.write(autojumpconf[1] + '\n')
+    file.write(autojumpconf[0] + '\n')
+    file.flush()
+    file.close()
 
 if __name__ == "__main__" :
     runCommandE("mkdir -p /root/tmp")
@@ -88,16 +115,14 @@ if __name__ == "__main__" :
         runCommandE("cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak")
         with open("/etc/ssh/sshd_config.bak" , "r") as file:
             lines = file.readlines()
-            num = 0
+            file = open("/etc/ssh/sshd_config" ,"w")
             for line in lines:
                 line = line.strip('\n')
                 if line[:15] == "PermitRootLogin" or line[:16] == "#PermitRootLogin":
                     line = "PermitRootLogin yes"
-                if num == 0 :
-                    runCommandE(str('echo "' + line + '" > /etc/ssh/sshd_config'))
-                    num = 1
-                else:
-                    runCommandE(str('echo "' + line + '" >> /etc/ssh/sshd_config'))
+                file.write(line + "\n")
+            file.flush()
+            file.close()
         runCommand("systemctl reload ssh")
         runCommand("systemctl start ssh")
 
@@ -105,11 +130,33 @@ if __name__ == "__main__" :
         packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' , 'emacs-nox' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ]
         installPackage( pm , packages)
 
+        #gitconfig
+        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gitconfig -O - | cat > /root/.gitconfig")
         #zsh
         ohmyzsh = "wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh"
         runCommandE(ohmyzsh)
-        runCommandE("chsh -s /usr/bin/zsh" )
+        (ret , output) = commands.getstatusoutput("which zsh")
+        if not ret == 0:
+            runCommandE("chsh -s /usr/bin/zsh" )
+        else:
+            runCommandE("chsh -s " + output.strip())
         zsh()
+
+        #alias
+        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/cdls -O - | cat > /usr/local/bin/cdls")
+        runCommandE("chmod +x /usr/local/bin/cdls")
+
+        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/grepv -O - | cat > /usr/local/bin/grepv")
+        runCommandE("chmod +x /usr/local/bin/grepv")
+
+        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gtext -O - | cat > /usr/local/bin/gtext")
+        runCommandE("chmod +x /usr/local/bin/gtext")
+
+        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/finda -O - | cat > /usr/local/bin/finda")
+        runCommandE("chmod +x /usr/local/bin/finda")
+
+        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/findc -O - | cat > /usr/local/bin/findc")
+        runCommandE("chmod +x /usr/local/bin/findc")
 
         #percol
         runCommandE("pip install percol")
@@ -127,16 +174,14 @@ if __name__ == "__main__" :
         runCommandE("cp /root/.emacs.d/init.el /root/.emacs.d/init.el.bak")
         with open("/root/.emacs.d/init.el.bak" , "r") as file:
             lines = file.readlines()
-            num = 0
+            file = open("/root/.emacs.d/init.el" , "w")
             for line in lines:
                 line = line.strip('\n')
                 if line == "(require 'init-xterm)":
                     line = ";;(require 'init-xterm)"
-                if num == 0 :
-                    runCommandE(str('echo "' + line + '" > /etc/ssh/sshd_config'))
-                    num = 1
-                else:
-                    runCommandE(str('echo "' + line + '" >> /etc/ssh/sshd_config'))
+                file.write(line + "\n")
+            file.flush()
+            file.close()
         runCommandE("mkdir -p /root/tmp/obj/")
         os.chdir("/usr/include")
         runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
@@ -147,11 +192,8 @@ if __name__ == "__main__" :
         os.chdir("/root/tmp")
         runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/init-local.el -O - | cat > /root/.emacs.d/lisp/init-local.el")
         #em alias
-        runCommandE("touch em")
-        runCommandE('echo "#!/bin/sh" > em')
-        runCommandE('echo "emacsclient -t $@ || (emacs --daemon && emacsclient -t $@)" >> em')
-        runCommandE('chmod +x em')
-        runCommandE('mv em /usr/local/bin/')
+        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/emacsalias -O - | cat > /usr/local/bin/em")
+        runCommandE("chmod +x /usr/local/bin/em")
 
     #vim
     if vim == 1:
@@ -167,14 +209,14 @@ if __name__ == "__main__" :
         runCommandE("pip install shadowsocks")
         runCommandE("mkdir -p /etc/shadowsocks/")
         print("plz input server , port , passwd of ss(/etc/shadowsocks/ss.json)")
-        server = input("server address:\n")
-        port = input("server port:\n")
-        passwd = input("server passwd:\n")
+        server = raw_input("server address:\n")
+        port = raw_input("server port:\n")
+        passwd = raw_input("server passwd:\n")
         content = '''{
-    "server":"''' + str(server).strip() + '''",
-    "server_port":''' + str(port).strip() + ''',
+    "server":"''' + server.strip() + '''",
+    "server_port":''' + port.strip() + ''',
     "local_port":1080,
-    "password":"''' + str(passwd).strip()+'''",
+    "password":"''' + passwd.strip()+'''",
     "timeout":600,
     "method":"aes-256-cfb"
 }
@@ -182,12 +224,13 @@ if __name__ == "__main__" :
 
         file = open("/etc/shadowsocks/ss.json", "w")
         file.write(content)
+        file.flush()
         file.close()
         runCommandE("cp /usr/local/lib/python2.7/dist-packages/shadowsocks/crypto/openssl.py /usr/local/lib/python2.7/dist-packages/shadowsocks/crypto/openssl.py.bak")
         runCommandE('perl -p -i -e "s/cleanup/reset/g" /usr/local/lib/python2.7/dist-packages/shadowsocks/crypto/openssl.py')
         file = open("/lib/systemd/system/ssc.service" , "w")
         content = """[Unit]
-Description=test
+Description=shadowsocks
 
 [Service]
 Type=forking
@@ -198,7 +241,8 @@ ExecStop=/usr/local/bin/sslocal -c /etc/shadowsocks/ss.json -d stop
 [Install]
 WantedBy=multi-user.target"""
         file.write(content)
-        file.close
+        file.flush()
+        file.close()
         runCommandE("systemctl daemon-reload")
 
         print("usage:systemctl start/stop/reload ssc")

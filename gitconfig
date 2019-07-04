@@ -1,0 +1,16 @@
+[user]
+	email = you@example.com
+	name = Your Name
+[alias]
+	co = checkout
+	ss = status
+	cm = commit -m
+	br = branch
+	bm = branch -m
+	cb = checkout -b
+	df = diff
+	ls = log --stat
+	lp = log -p
+	plo = pull origin
+	plod = pull origin dev
+	pho = push origin
