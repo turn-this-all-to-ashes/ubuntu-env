@@ -39,6 +39,8 @@ chmod +x install.py
 
 默认则全部安装
 
+大部分用户可以使用 ./install -v --no-rust
+
 # USAGE
 
 | 命令                   | 介绍                                                        |
