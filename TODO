@@ -1,0 +1,7 @@
+[packages]
+golang
+
+[support]
+centos
+arch
+debian
