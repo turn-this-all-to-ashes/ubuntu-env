@@ -21,7 +21,7 @@ def runCommandE(command):
     p.wait()
     if not p.returncode == 0:
         print("run "+command + " failed: ")
-        for line in p.stdout.readlines():
+        for line in p.stderr.readlines():
             print(line)
         sys.exit()
     return (0 , p.stdout.readlines())
@@ -31,7 +31,7 @@ def runCommand(command):
     p.wait()
     if not p.returncode == 0:
         print("run "+command + " failed: ")
-        for line in p.stdout.readlines():
+        for line in p.stderr.readlines():
             print(line)
     return (p.returncode , p.stdout.readlines())
 
