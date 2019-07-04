@@ -104,7 +104,7 @@ if __name__ == "__main__" :
         vim =1
         shadowsocks = 1
 
-        #ssh
+    #ssh
     pm = 'apt-get install -y '
     packages = ['openssh-server' ,]
     installPackage(pm , packages)
@@ -119,8 +119,6 @@ if __name__ == "__main__" :
             file.write(line + "\n")
         file.flush()
         file.close()
-    runCommand("systemctl reload ssh")
-    runCommand("systemctl start ssh")
 
     #packages
     packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ,'rar' , 'p7zip']
@@ -251,3 +249,7 @@ WantedBy=multi-user.target"""
         runCommandE("systemctl daemon-reload")
 
         print("usage:systemctl start/stop/reload ssc")
+
+    runCommand("systemctl reload ssh")
+    runCommand("systemctl start ssh")
+    runCommand("systemctl restart ssh")
