@@ -8,28 +8,27 @@ import subprocess
 
 def installPackage(pm , packages):
     for package in packages:
-        p = subprocess.Popen(str(pm+package) , shell = True , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(str(pm+package))
+        p = subprocess.Popen(str(pm+package) , shell = True )
         p.wait()
         if not p.returncode == 0:
-            print("install " + package+" failed:")
-            for line in p.stdout.readlines():
-                print(line)
+            print("install " + package+" failed")
     return 0
 
 def runCommandE(command):
     p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
-        print("run "+command + " failed: ")
+        print("run "+command + " failed")
         sys.exit()
-    return (0 , p.stdout.readlines())
+    return p.returncode
 
 def runCommand(command):
     p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
-        print("run "+command + " failed: ")
-    return (p.returncode , p.stdout.readlines())
+        print("run "+command + " failed")
+    return p.returncode
 
 def zsh():
     #autojump
@@ -107,9 +106,7 @@ if __name__ == "__main__" :
         #zsh
         ohmyzsh = "wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh"
         runCommandE(ohmyzsh)
-        (ret , output) = runCommandE("which zsh")
-        output = output[0]
-        runCommandE(str("chsh -s " + output.strip()))
+        runCommandE("chsh -s /usr/bin/zsh" )
         zsh()
 
         #percol
