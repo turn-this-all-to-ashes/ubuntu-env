@@ -12,4 +12,5 @@
         -v : vim环境
         -e : emacs环境
         -s : shadowsocks
+        --no-rust : 不安装rust
     仅在ubuntu server 18.04中测试通过.
