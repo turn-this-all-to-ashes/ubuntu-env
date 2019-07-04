@@ -101,7 +101,5 @@ source $ZSH/oh-my-zsh.sh
 [[ -s /root/.autojump/etc/profile.d/autojump.sh ]] && source /root/.autojump/etc/profile.d/autojump.sh
 autoload -U compinit && compinit -u
 
-EDITOR=em
-export EDITOR
 bindkey '^P' history-substring-search-up
 bindkey '^N' history-substring-search-down

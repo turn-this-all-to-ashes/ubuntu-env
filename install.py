@@ -47,25 +47,8 @@ def zsh():
     runCommandE("git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting")
     #history-substring-search
     runCommandE("git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search")
-
     #.zshrc
-    runCommandE("cp ~/.zhsrc ~/.zshrc.bak")
-    with open("/root/.zshrc.bak" , "r") as file:
-        lines = file.readlines()
-        num = 0
-        for line in lines:
-            line = line.strip('\n')
-            if line[:8] == "plugins=":
-                line = "plugins=(git heroku pip lein command-not-found zsh-syntax-highlighting zsh-autosuggestions history-substring-search)"
-            if num == 0 :
-                runCommandE(str('echo "' + line + '" > ~/.zshrc'))
-                num = 1
-            else:
-                runCommandE(str('echo "' + line + '" >> ~/.zshrc'))
-    runCommandE('echo "[[ -s /root/.autojump/etc/profile.d/autojump.sh ]] && source /root/.autojump/etc/profile.d/autojump.sh" >> ~/.zshrc')
-    runCommandE('echo "autoload -U compinit && compinit -u" >> ~/zshrc')
-    runCommandE('echo "bindkey \'^P\' history-substring-search-up" >> ~/.zshrc')
-    runCommandE('echo "bindkey \'^N\' history-substring-search-down" >> ~/.zshrc')
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/zshrc -O - | cat > /root/.zshrc")
 
 if __name__ == "__main__" :
     runCommandE("mkdir -p /root/tmp")
