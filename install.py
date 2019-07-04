@@ -77,15 +77,13 @@ def zsh():
 if __name__ == "__main__" :
     runCommandE("mkdir -p /root/tmp")
     os.chdir("/root/tmp")
-    pi = 0
     vim = 0
     emacs = 0
     shadowsocks = 0
+    norust = 0
     for args in sys.argv:
         if args[0] == '-':
             if args[1] != '-':
-                if 'p' in args:
-                    pi = 1
                 if 'e' in args :
                     emacs = 1
                 if 'v' in args:
@@ -93,75 +91,77 @@ if __name__ == "__main__" :
                 if 's' in args :
                     shadowsocks = 1
             elif args[1] == '-':
-                if 'package' in args:
-                    pi = 1
                 if 'emacs' in args:
                     emacs =1
                 if 'vim' in args:
                     vim = 1
                 if 'shadowsocks' in args:
                     shadowsocks = 1
+                if 'no-rust' in args:
+                    norust = 1
     if len(sys.argv) == 1:
-        pi = 1
         emacs = 1
         vim =1
         shadowsocks = 1
 
-    if pi == 1:
         #ssh
-        pm = 'apt-get install -y '
-        packages = ['openssh-server' ,]
+    pm = 'apt-get install -y '
+    packages = ['openssh-server' ,]
+    installPackage(pm , packages)
+    runCommandE("cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak")
+    with open("/etc/ssh/sshd_config.bak" , "r") as file:
+        lines = file.readlines()
+        file = open("/etc/ssh/sshd_config" ,"w")
+        for line in lines:
+            line = line.strip('\n')
+            if line[:15] == "PermitRootLogin" or line[:16] == "#PermitRootLogin":
+                line = "PermitRootLogin yes"
+            file.write(line + "\n")
+        file.flush()
+        file.close()
+    runCommand("systemctl reload ssh")
+    runCommand("systemctl start ssh")
+
+    #packages
+    packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ]
+    installPackage( pm , packages)
+    if emacs == 1:
+        packages = ['emacs-nox' ,]
         installPackage(pm , packages)
-        runCommandE("cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak")
-        with open("/etc/ssh/sshd_config.bak" , "r") as file:
-            lines = file.readlines()
-            file = open("/etc/ssh/sshd_config" ,"w")
-            for line in lines:
-                line = line.strip('\n')
-                if line[:15] == "PermitRootLogin" or line[:16] == "#PermitRootLogin":
-                    line = "PermitRootLogin yes"
-                file.write(line + "\n")
-            file.flush()
-            file.close()
-        runCommand("systemctl reload ssh")
-        runCommand("systemctl start ssh")
 
-        #packages
-        packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' , 'emacs-nox' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ]
-        installPackage( pm , packages)
+    #gitconfig
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gitconfig -O - | cat > /root/.gitconfig")
+    #zsh
+    ohmyzsh = "wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh"
+    runCommandE(ohmyzsh)
+    (ret , output) = commands.getstatusoutput("which zsh")
+    if not ret == 0:
+        runCommandE("chsh -s /usr/bin/zsh" )
+    else:
+        runCommandE("chsh -s " + output.strip())
+    zsh()
 
-        #gitconfig
-        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gitconfig -O - | cat > /root/.gitconfig")
-        #zsh
-        ohmyzsh = "wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh"
-        runCommandE(ohmyzsh)
-        (ret , output) = commands.getstatusoutput("which zsh")
-        if not ret == 0:
-            runCommandE("chsh -s /usr/bin/zsh" )
-        else:
-            runCommandE("chsh -s " + output.strip())
-        zsh()
+    #alias
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/cdls -O - | cat > /usr/local/bin/cdls")
+    runCommandE("chmod +x /usr/local/bin/cdls")
 
-        #alias
-        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/cdls -O - | cat > /usr/local/bin/cdls")
-        runCommandE("chmod +x /usr/local/bin/cdls")
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/grepv -O - | cat > /usr/local/bin/grepv")
+    runCommandE("chmod +x /usr/local/bin/grepv")
 
-        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/grepv -O - | cat > /usr/local/bin/grepv")
-        runCommandE("chmod +x /usr/local/bin/grepv")
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gtext -O - | cat > /usr/local/bin/gtext")
+    runCommandE("chmod +x /usr/local/bin/gtext")
 
-        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gtext -O - | cat > /usr/local/bin/gtext")
-        runCommandE("chmod +x /usr/local/bin/gtext")
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/finda -O - | cat > /usr/local/bin/finda")
+    runCommandE("chmod +x /usr/local/bin/finda")
 
-        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/finda -O - | cat > /usr/local/bin/finda")
-        runCommandE("chmod +x /usr/local/bin/finda")
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/findc -O - | cat > /usr/local/bin/findc")
+    runCommandE("chmod +x /usr/local/bin/findc")
 
-        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/findc -O - | cat > /usr/local/bin/findc")
-        runCommandE("chmod +x /usr/local/bin/findc")
+    #percol
+    runCommandE("pip install percol")
 
-        #percol
-        runCommandE("pip install percol")
-
-        #rust
+    #rust
+    if not norust == 1:
         cmd = "curl https://sh.rustup.rs -sSf | sh"
         p = subprocess.Popen(cmd,shell = True)
         p.wait()
