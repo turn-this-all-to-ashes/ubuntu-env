@@ -13,3 +13,40 @@
         -s : shadowsocks
         --no-rust : 不安装rust
     仅在ubuntu server 18.04中测试通过.
+
+
+# USAGE
+    命令行历史搜索绑定按键: ctrl+p ctrl+n
+    autojump : j
+    使用sctlstart/sctlstop ssc开启/关闭shadowsocks(配置文件位置:/etc/shadowsocks/ss.json)
+    git alias 位于 /root/.gitconfig 中
+        co = checkout
+        ss = status
+        cm = commit -m
+        br = branch
+        bm = branch -m
+        cb = checkout -b
+        df = diff
+        ls = log --stat
+        lp = log -p
+        plo = pull origin
+        plod = pull origin dev
+        pho = push origin
+
+    命令行 alias 位于 /root/.zshrc 中
+        alias tarx="tar zxvf"
+        alias tarc="tar zcvf"
+        alias sctl="systemctl"
+        alias sctlstart="systemctl start"
+        alias sctlreload="systemctl reload"
+        alias sctlstop="systemctl stop"
+        alias sctlrestart="systemctl restart"
+        alias rmd="rm -rf"
+
+    c -> cd & ls
+    em -> 开启emacs server , 若server已开启 则使用client连接
+    grepv -> grep $@ | grep -v "grep"
+    gtext -> grep -rn $@
+    pg -> ps -aux | grep $@ | grep -v "grep"
+    finda -> find / -name $@
+    findc -> find . -name $@
