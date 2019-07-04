@@ -157,6 +157,9 @@ if __name__ == "__main__" :
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/findc -O - | cat > /usr/local/bin/findc")
     runCommandE("chmod +x /usr/local/bin/findc")
 
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/pg -O - | cat > /usr/local/bin/pg")
+    runCommandE("chmod +x /usr/local/bin/pg")
+
     #percol
     runCommandE("pip install percol")
 
@@ -198,11 +201,13 @@ if __name__ == "__main__" :
     #vim
     if vim == 1:
         runCommandE("git clone https://github.com/DamZiobro/vim-ide")
-        cmd = "./vim-ide/installVim.sh"
+        os.chdir("./vim-ide/")
+        cmd = "./installVim.sh"
         p = subprocess.Popen(cmd , shell = True)
         p.wait()
         if p.returncode != 0 :
             print("set up vim failed")
+        os.chdir("/root/tmp/")
 
     #shadowsocks
     if shadowsocks == 1:
