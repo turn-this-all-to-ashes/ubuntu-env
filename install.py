@@ -16,6 +16,7 @@ def installPackage(pm , packages):
     return 0
 
 def runCommandE(command):
+    print(command)
     p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
@@ -24,6 +25,7 @@ def runCommandE(command):
     return p.returncode
 
 def runCommand(command):
+    print(command)
     p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
