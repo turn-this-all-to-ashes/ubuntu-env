@@ -1,5 +1,7 @@
 # INSTALL
 
+测试系统版本: ubuntu server 18.04  
+
 安装前先配置好网络环境(ip dns等)
 
 设置root用户密码 : 
