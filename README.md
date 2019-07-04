@@ -8,7 +8,6 @@
         chmod +x install.py
         ./install.py
         使用命令行参数指定安装内容:
-        -p : 安装依赖以及工具等(通常需要指定)
         -v : vim环境
         -e : emacs环境
         -s : shadowsocks
