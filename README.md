@@ -35,6 +35,7 @@ chmod +x install.py
 | -v                         | vim         |
 | -e                         | emacs       |
 | -s                         | shadowsocks |
+| --no-rust                  | 不安装rust  |
 | --no-nfs                   | 不安装nfs   |
 | --no-mysql                 | 不安装mysql |
 | --no-golang                | 不安装golang|
