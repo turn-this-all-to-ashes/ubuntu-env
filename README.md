@@ -36,10 +36,13 @@ chmod +x install.py
 | -e                         | emacs       |
 | -s                         | shadowsocks |
 | --no-rust                  | 不安装rust  |
+| --no-nfs                   | 不安装nfs   |
+| --no-mysql                 | 不安装mysql |
+| --no-golang                | 不安装golang|
 
 默认则全部安装
 
-大部分用户可以使用 ./install -v --no-rust
+大部分用户可以使用 ./install -v --no-rust --no-golang
 
 # USAGE
 
@@ -75,3 +78,4 @@ chmod +x install.py
 | pg                     | ps -aux \| grep $@ \| grep -v "grep"                        |
 | finda                  | find / -name $@                                             |
 | findc                  | find . -name $@                                             |
+| /root/tmp              | nfs目录                                                    |
