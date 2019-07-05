@@ -83,6 +83,8 @@ if __name__ == "__main__" :
     shadowsocks = 0
     norust = 0
     nonfs = 0
+    nogolang = 0
+    nomysql = 0
     for args in sys.argv:
         if args[0] == '-':
             if args[1] != '-':
@@ -103,6 +105,10 @@ if __name__ == "__main__" :
                     norust = 1
                 if 'no-nfs' in args:
                     nonfs = 1
+                if 'no-golang' in args:
+                    nogolang = 1
+                if 'no-mysql' in args :
+                    nomysql = 1
     if len(sys.argv) == 1:
         emacs = 1
         vim =1
@@ -125,7 +131,7 @@ if __name__ == "__main__" :
         file.close()
 
     #packages
-    packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ,'rar' , 'p7zip']
+    packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ,'rar' , 'p7zip' , 'sqlite']
     installPackage( pm , packages)
     if emacs == 1:
         packages = ['emacs-nox' ,]
@@ -133,6 +139,13 @@ if __name__ == "__main__" :
     if not nonfs == 1:
         packages = ['nfs-kernel-server' ,]
         installPackage(pm , packages)
+    if not nogolang == 1:
+        packages = ['golang' ,]
+        installPackage(pm , packages)
+    if not nomysql == 1:
+        packages = ['mysql-server' , ]
+        runCommand('apt-get update')
+        installPackage(pm , packages )
 
     #gitconfig
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gitconfig -O - | cat > /root/.gitconfig")
@@ -175,6 +188,10 @@ if __name__ == "__main__" :
         p.wait()
         if p.returncode != 0 :
             print("install rust failed")
+        file = open("/root/.zprofile" , "a")
+        file.write('export PATH="$HOME/.cargo/bin:$PATH"\n')
+        file.flush()
+        file.close()
 
     #nfs
     if not nonfs == 1:
@@ -195,13 +212,18 @@ if __name__ == "__main__" :
                     network= networktmp
         if auto == 1:
             network = network.split('.')
-            network = "echo \"/root/tmp " + network[0] + "." + network[1]+ "." + network[2] + ".0/24" + "(rw,sync,no_subtree_check,no_root_squash)\" >> /etc/exports"
+            network = 'echo "/root/tmp ' + network[0] + "." + network[1]+ "." + network[2] + ".0/24" + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
         else:
             network = raw_input("input nfs network(e.g. 192.168.0.0/24) :\n")
-            network = "echo \"/root/tmp " + network + "(rw,sync,no_subtree_check,no_root_squash)\" >> /etc/exports"
+            network = 'echo "/root/tmp ' + network + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
         runCommandE(network)
         runCommandE("exportfs -a")
         runCommandE("systemctl restart nfs-kernel-server")
+
+    #mysql
+    if not nomysql == 1:
+        runCommand("mysql_secure_installation")
+        runCommandE("systemctl restart mysql.service")
 
     #emacs
     if emacs == 1:
