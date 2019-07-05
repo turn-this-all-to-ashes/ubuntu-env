@@ -310,15 +310,16 @@ WantedBy=multi-user.target"""
 1)vim
 2)emacs
 > """)
-        if editor == '1':
+        if editor == '1' or editor == 'vim':
             runCommandE("git config --global core.editor vim")
             file.write('export EDITOR="vim"')
             break
-        elif editor == '2':
+        elif editor == '2' or editor == 'emacs':
             runCommandE("git config --global core.editor em")
             file.write('export EDITOR="em"')
             break
-        elif editor == '\n':
+        elif editor == '\n' or editor == '':
+            print("keep default")
             break
         else:
             print("input error")
