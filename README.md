@@ -44,6 +44,8 @@ chmod +x install.py
 
 大部分用户可以使用 ./install -v --no-rust --no-golang
 
+安装后残留的/root/tmp 目录建议保留. 此作为nfs和ftp服务的默认目录  可用于在其他计算机上与本机交换文件
+
 # USAGE
 
 | 命令                   | 介绍                                                        |
