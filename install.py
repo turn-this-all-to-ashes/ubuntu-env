@@ -182,6 +182,9 @@ if __name__ == "__main__" :
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/pg -O - | cat > /usr/local/bin/pg")
     runCommandE("chmod +x /usr/local/bin/pg")
 
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/killemacs -O - | cat > /usr/local/bin/killemacs")
+    runCommandE("chmod +x /usr/local/bin/killemacs")
+
     #percol
     if update == 0:
         runCommandE("pip install percol")
@@ -260,6 +263,8 @@ if __name__ == "__main__" :
         #em alias
             runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/emacsalias -O - | cat > /usr/local/bin/em")
             runCommandE("chmod +x /usr/local/bin/em")
+            runCommandE('echo "" >> /etc/crontab')
+            runCommandE('echo "0 0 * * * root killemacs > /dev/null 2>&1" >> /etc/crontab')
 
     #vim
     if vim == 1 and update == 0:
@@ -340,6 +345,6 @@ WantedBy=multi-user.target"""
         file.flush()
         file.close()
 
-        runCommand("systemctl reload ssh")
+        runCommandE("systemctl restart cron")
         runCommand("systemctl start ssh")
         runCommand("systemctl restart ssh")
