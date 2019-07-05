@@ -79,5 +79,6 @@ chmod +x install.py
 | finda                  | find / -name $@                                             |
 | findc                  | find . -name $@                                             |
 | /root/tmp              | nfs目录                                                    |
+| /root/tmp              | ftp目录,可以再windows下直接挂载网络位置,或在linux下使用curlftpfs挂载  |                                     
 | netstats               | netstat -anp                                                |
 | sshcopyid              | ssh-copy-id -i /root/.ssh/ip_rsa.pub root@$@                |
