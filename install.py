@@ -83,6 +83,9 @@ if __name__ == "__main__" :
     nogolang = 0
     nomysql = 0
     update = 0
+
+    pm = 'apt-get install -y '
+
     for args in sys.argv:
         if args[0] == '-':
             if args[1] != '-':
@@ -116,7 +119,6 @@ if __name__ == "__main__" :
 
     #ssh
     if update == 0:
-        pm = 'apt-get install -y '
         packages = ['openssh-server' ,]
         installPackage(pm , packages)
         runCommandE("cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak")
