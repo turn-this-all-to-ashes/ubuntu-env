@@ -1,2 +1,2 @@
 #!/usr/bin/env zsh
-ps -aux | grep $@ | grep -v "grep"
+ps -aux | grep $@ | grep -v "grep" | grep -v "/usr/local/bin/pg"
