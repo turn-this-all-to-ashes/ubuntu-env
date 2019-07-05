@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+pg emacsclient > /dev/null 2>&1
+if [ $? -ne 0 ]
+then
+    pg emacs | awk '{if($9 == "--daemon")print $2}' | xargs kill -9 > /dev/null 2>&1
+fi
+
