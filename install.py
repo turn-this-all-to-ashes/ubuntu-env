@@ -57,6 +57,7 @@ def zsh():
         if line[8] == '[' or line[8] == 'a':
             autojumpconf.append(line)
     os.chdir("/root/tmp")
+    runCommandE("rm -rf ./autojump")
     
     #autosuggestions
     runCommandE("git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions")
@@ -73,8 +74,7 @@ def zsh():
     file.close()
 
 if __name__ == "__main__" :
-    runCommandE("mkdir -p /root/tmp")
-    os.chdir("/root/tmp")
+
     vim = 0
     emacs = 0
     shadowsocks = 0
@@ -117,6 +117,11 @@ if __name__ == "__main__" :
         vim =1
         shadowsocks = 1
 
+    if update == 0:
+        runCommandE("mkdir -p /root/tmp")
+        os.chdir("/root/tmp")
+        runCommandE("mkdir -p /root/nfs/ftp")
+
     #ssh
     if update == 0:
         packages = ['openssh-server' ,]
@@ -149,6 +154,10 @@ if __name__ == "__main__" :
         packages = ['mysql-server' , ]
         runCommand('apt-get update')
         installPackage(pm , packages )
+
+    #chown nfs/ftp
+    if update == 0:
+        runCommandE("chown -R ftp:ftp /root/nfs/ftp")
 
     #gitconfig
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gitconfig -O - | cat > /root/.gitconfig")
@@ -234,10 +243,10 @@ if __name__ == "__main__" :
                         network= networktmp
             if auto == 1:
                 network = network.split('.')
-                network = 'echo "/root/tmp ' + network[0] + "." + network[1]+ "." + network[2] + ".0/24" + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
+                network = 'echo "/root/nfs ' + network[0] + "." + network[1]+ "." + network[2] + ".0/24" + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
             else:
                 network = raw_input("input nfs network(e.g. 192.168.0.0/24) :\n")
-                network = 'echo "/root/tmp ' + network + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
+                network = 'echo "/root/nfs ' + network + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
             runCommandE(network)
             runCommandE("exportfs -a")
             runCommandE("systemctl restart nfs-kernel-server")
@@ -288,6 +297,7 @@ if __name__ == "__main__" :
         if p.returncode != 0 :
             print("set up vim failed")
         os.chdir("/root/tmp/")
+        runCommands("rm -rf ./vim-ide")
 
     #shadowsocks
     if shadowsocks == 1 and update == 0:
