@@ -1,0 +1,3 @@
+#!/usr/bin/env zsh
+
+ssh-copy-id -i /root/.shh/id_rsa.pub root@$@

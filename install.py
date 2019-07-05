@@ -185,9 +185,16 @@ if __name__ == "__main__" :
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/killemacs -O - | cat > /usr/local/bin/killemacs")
     runCommandE("chmod +x /usr/local/bin/killemacs")
 
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/sshcopyid -O - | cat > /usr/local/bin/sshcopyid")
+    runCommandE("chmod +x /usr/local/bin/sshcopyid")
+
     #percol
     if update == 0:
         runCommandE("pip install percol")
+
+    #ssh key
+    if update == 0:
+        runCommandE("ssh-keygen -t rsa")
 
     #rust
     if update == 0:
