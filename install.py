@@ -60,6 +60,7 @@ def zsh():
             number += 1
             autojumpconf.append(output[index])
     os.chdir("/root/tmp")
+    
     #autosuggestions
     runCommandE("git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions")
     #highlighting
@@ -81,6 +82,7 @@ if __name__ == "__main__" :
     emacs = 0
     shadowsocks = 0
     norust = 0
+    nonfs = 0
     for args in sys.argv:
         if args[0] == '-':
             if args[1] != '-':
@@ -99,6 +101,8 @@ if __name__ == "__main__" :
                     shadowsocks = 1
                 if 'no-rust' in args:
                     norust = 1
+                if 'no-nfs' in args:
+                    nonfs = 1
     if len(sys.argv) == 1:
         emacs = 1
         vim =1
@@ -125,6 +129,9 @@ if __name__ == "__main__" :
     installPackage( pm , packages)
     if emacs == 1:
         packages = ['emacs-nox' ,]
+        installPackage(pm , packages)
+    if not nonfs == 1:
+        packages = ['nfs-kernel-server' ,]
         installPackage(pm , packages)
 
     #gitconfig
@@ -168,6 +175,33 @@ if __name__ == "__main__" :
         p.wait()
         if p.returncode != 0 :
             print("install rust failed")
+
+    #nfs
+    if not nonfs == 1:
+        (ret , output) = commands.getstatusoutput("ifconfig")
+        auto = 0
+        network = ''
+        if not ret == 0:
+            auto = 0
+        else:
+            output  = output.split('\n\n')
+            for s in output:
+                networktmp = s.split('\n')
+                networktmp = (networktmp[1]).strip()
+                networktmp = networktmp.split(' ')
+                networktmp = networktmp[1]
+                if '192.' in network :
+                    auto = 1
+                    network= networktmp
+        if auto == 1:
+            network = network.split('.')
+            network = "echo \"/root/tmp " + network[0] + "." + network[1]+ "." + network[2] + ".0/24" + "(rw,sync,no_subtree_check,no_root_squash)\" >> /etc/exports"
+        else:
+            network = raw_input("input nfs network(e.g. 192.168.0.0/24) :\n")
+            network = "echo \"/root/tmp " + network + "(rw,sync,no_subtree_check,no_root_squash)\" >> /etc/exports"
+        runCommandE(network)
+        runCommandE("exportfs -a")
+        runCommandE("systemctl restart nfs-kernel-server")
 
     #emacs
     if emacs == 1:
