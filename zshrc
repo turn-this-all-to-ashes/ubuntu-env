@@ -108,7 +108,7 @@ alias sctlrestart="systemctl restart"
 alias sctlstatus="systemctl status"
 alias rmd="rm -rf"
 alias c="source cdls"
-alias netstats = "netstat -anp"
+alias netstats="netstat -anp"
 
 bindkey '^P' history-substring-search-up
 bindkey '^N' history-substring-search-down
