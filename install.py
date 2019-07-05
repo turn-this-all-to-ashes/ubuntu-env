@@ -50,15 +50,12 @@ def zsh():
         print("install autojump failed")
         sys.exit()
     output= output.split('\n')
-    number= 0
     autojumpconf= []
-    for i in range(0 , len(output)):
-        if number >1 :
-            break
-        index = -1 - i
-        if len(output[index]) > 5:
-            number += 1
-            autojumpconf.append(output[index])
+    for line in output:
+        if not line[0] == ' ':
+            continue
+        if line[8] == '[' or line[8] == 'a':
+            autojumpconf.append(line)
     os.chdir("/root/tmp")
     
     #autosuggestions
@@ -305,6 +302,29 @@ WantedBy=multi-user.target"""
         runCommandE("systemctl daemon-reload")
 
         print("usage:systemctl start/stop/reload ssc")
+
+    #default editor
+    file = open("/root/.zshrc" , "a")
+    while 1:
+        editor = raw_input("""default editor:
+1)vim
+2)emacs
+> """)
+        if editor == '1':
+            runCommandE("git config --global core.editor vim")
+            file.write('export EDITOR="vim"')
+            break
+        elif editor == '2':
+            runCommandE("git config --global core.editor em")
+            file.write('export EDITOR="em"')
+            break
+        elif editor == '\n':
+            break
+        else:
+            print("input error")
+            continue
+    file.flush()
+    file.close()
 
     runCommand("systemctl reload ssh")
     runCommand("systemctl start ssh")
