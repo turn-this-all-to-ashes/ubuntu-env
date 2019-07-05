@@ -1,2 +1,2 @@
 #!/usr/bin/env zsh
-ps -ef | grep $@ | grep -v "grep" | grep -v "/usr/local/bin/pg"
+ps -ef | grep $@ --colour=always| grep -v "grep" --colour=always | grep -v "/usr/local/bin/pg" --colour=always

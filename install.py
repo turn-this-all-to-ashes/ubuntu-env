@@ -134,7 +134,7 @@ if __name__ == "__main__" :
             file.close()
 
     #packages
-    packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ,'rar' , 'p7zip' , 'sqlite']
+    packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ,'rar' , 'p7zip' , 'sqlite' , 'curlftpfs' , 'vsftpd']
     installPackage( pm , packages)
     if emacs == 1:
         packages = ['emacs-nox' ,]
@@ -187,6 +187,11 @@ if __name__ == "__main__" :
 
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/sshcopyid -O - | cat > /usr/local/bin/sshcopyid")
     runCommandE("chmod +x /usr/local/bin/sshcopyid")
+
+    #vsftpd
+    if update == 0:
+        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/vsftpd -O - | cat > /etc/vsftpd.conf")
+        runCommandE("systemctl restart vsftpd")
 
     #percol
     if update == 0:
@@ -353,5 +358,4 @@ WantedBy=multi-user.target"""
         file.close()
 
         runCommandE("systemctl restart cron")
-        runCommand("systemctl start ssh")
         runCommand("systemctl restart ssh")
