@@ -82,6 +82,7 @@ if __name__ == "__main__" :
     nonfs = 0
     nogolang = 0
     nomysql = 0
+    update = 0
     for args in sys.argv:
         if args[0] == '-':
             if args[1] != '-':
@@ -91,6 +92,8 @@ if __name__ == "__main__" :
                     vim =1
                 if 's' in args :
                     shadowsocks = 1
+                if 'u' in args :
+                    update = 1
             elif args[1] == '-':
                 if 'emacs' in args:
                     emacs =1
@@ -112,20 +115,21 @@ if __name__ == "__main__" :
         shadowsocks = 1
 
     #ssh
-    pm = 'apt-get install -y '
-    packages = ['openssh-server' ,]
-    installPackage(pm , packages)
-    runCommandE("cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak")
-    with open("/etc/ssh/sshd_config.bak" , "r") as file:
-        lines = file.readlines()
-        file = open("/etc/ssh/sshd_config" ,"w")
-        for line in lines:
-            line = line.strip('\n')
-            if line[:15] == "PermitRootLogin" or line[:16] == "#PermitRootLogin":
-                line = "PermitRootLogin yes"
-            file.write(line + "\n")
-        file.flush()
-        file.close()
+    if update == 0:
+        pm = 'apt-get install -y '
+        packages = ['openssh-server' ,]
+        installPackage(pm , packages)
+        runCommandE("cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak")
+        with open("/etc/ssh/sshd_config.bak" , "r") as file:
+            lines = file.readlines()
+            file = open("/etc/ssh/sshd_config" ,"w")
+            for line in lines:
+                line = line.strip('\n')
+                if line[:15] == "PermitRootLogin" or line[:16] == "#PermitRootLogin":
+                    line = "PermitRootLogin yes"
+                file.write(line + "\n")
+            file.flush()
+            file.close()
 
     #packages
     packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ,'rar' , 'p7zip' , 'sqlite']
@@ -147,14 +151,15 @@ if __name__ == "__main__" :
     #gitconfig
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gitconfig -O - | cat > /root/.gitconfig")
     #zsh
-    ohmyzsh = "wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh"
-    runCommandE(ohmyzsh)
-    (ret , output) = commands.getstatusoutput("which zsh")
-    if not ret == 0:
-        runCommandE("chsh -s /usr/bin/zsh" )
-    else:
-        runCommandE("chsh -s " + output.strip())
-    zsh()
+    if update == 0:
+        ohmyzsh = "wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh"
+        runCommandE(ohmyzsh)
+        (ret , output) = commands.getstatusoutput("which zsh")
+        if not ret == 0:
+            runCommandE("chsh -s /usr/bin/zsh" )
+        else:
+            runCommandE("chsh -s " + output.strip())
+        zsh()
 
     #alias
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/cdls -O - | cat > /usr/local/bin/cdls")
@@ -176,81 +181,86 @@ if __name__ == "__main__" :
     runCommandE("chmod +x /usr/local/bin/pg")
 
     #percol
-    runCommandE("pip install percol")
+    if update == 0:
+        runCommandE("pip install percol")
 
     #rust
-    if not norust == 1:
-        cmd = "curl https://sh.rustup.rs -sSf | sh"
-        p = subprocess.Popen(cmd,shell = True)
-        p.wait()
-        if p.returncode != 0 :
-            print("install rust failed")
-        file = open("/root/.zprofile" , "a")
-        file.write('export PATH="$HOME/.cargo/bin:$PATH"\n')
-        file.flush()
-        file.close()
-
-    #nfs
-    if not nonfs == 1:
-        (ret , output) = commands.getstatusoutput("ifconfig")
-        auto = 0
-        network = ''
-        if not ret == 0:
-            auto = 0
-        else:
-            output  = output.split('\n\n')
-            for s in output:
-                networktmp = s.split('\n')
-                networktmp = (networktmp[1]).strip()
-                networktmp = networktmp.split(' ')
-                networktmp = networktmp[1]
-                if '192.' in network :
-                    auto = 1
-                    network= networktmp
-        if auto == 1:
-            network = network.split('.')
-            network = 'echo "/root/tmp ' + network[0] + "." + network[1]+ "." + network[2] + ".0/24" + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
-        else:
-            network = raw_input("input nfs network(e.g. 192.168.0.0/24) :\n")
-            network = 'echo "/root/tmp ' + network + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
-        runCommandE(network)
-        runCommandE("exportfs -a")
-        runCommandE("systemctl restart nfs-kernel-server")
-
-    #mysql
-    if not nomysql == 1:
-        runCommand("mysql_secure_installation")
-        runCommandE("systemctl restart mysql.service")
-
-    #emacs
-    if emacs == 1:
-        runCommandE("git clone https://github.com/purcell/emacs.d.git ~/.emacs.d")
-        runCommandE("cp /root/.emacs.d/init.el /root/.emacs.d/init.el.bak")
-        with open("/root/.emacs.d/init.el.bak" , "r") as file:
-            lines = file.readlines()
-            file = open("/root/.emacs.d/init.el" , "w")
-            for line in lines:
-                line = line.strip('\n')
-                if line == "(require 'init-xterm)":
-                    line = ";;(require 'init-xterm)"
-                file.write(line + "\n")
+    if update == 0:
+        if not norust == 1:
+            cmd = "curl https://sh.rustup.rs -sSf | sh"
+            p = subprocess.Popen(cmd,shell = True)
+            p.wait()
+            if p.returncode != 0 :
+                print("install rust failed")
+            file = open("/root/.zprofile" , "a")
+            file.write('export PATH="$HOME/.cargo/bin:$PATH"\n')
             file.flush()
             file.close()
-        runCommandE("mkdir -p /root/tmp/obj/")
-        os.chdir("/usr/include")
-        runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
-        os.chdir("/usr/src")
-        runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
-        os.chdir("/usr/local/include")
-        runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
-        os.chdir("/root/tmp")
-        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/init-local.el -O - | cat > /root/.emacs.d/lisp/init-local.el")
+
+    #nfs
+    if update == 0:
+        if not nonfs == 1:
+            (ret , output) = commands.getstatusoutput("ifconfig")
+            auto = 0
+            network = ''
+            if not ret == 0:
+                auto = 0
+            else:
+                output  = output.split('\n\n')
+                for s in output:
+                    networktmp = s.split('\n')
+                    networktmp = (networktmp[1]).strip()
+                    networktmp = networktmp.split(' ')
+                    networktmp = networktmp[1]
+                    if '192.' in network :
+                        auto = 1
+                        network= networktmp
+            if auto == 1:
+                network = network.split('.')
+                network = 'echo "/root/tmp ' + network[0] + "." + network[1]+ "." + network[2] + ".0/24" + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
+            else:
+                network = raw_input("input nfs network(e.g. 192.168.0.0/24) :\n")
+                network = 'echo "/root/tmp ' + network + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
+            runCommandE(network)
+            runCommandE("exportfs -a")
+            runCommandE("systemctl restart nfs-kernel-server")
+
+    #mysql
+    if update == 0 :
+        if not nomysql == 1:
+            runCommand("mysql_secure_installation")
+            runCommandE("systemctl restart mysql.service")
+
+    #emacs
+    if update == 0:
+        if emacs == 1:
+            runCommandE("git clone https://github.com/purcell/emacs.d.git ~/.emacs.d")
+            runCommandE("cp /root/.emacs.d/init.el /root/.emacs.d/init.el.bak")
+            with open("/root/.emacs.d/init.el.bak" , "r") as file:
+                lines = file.readlines()
+                file = open("/root/.emacs.d/init.el" , "w")
+                for line in lines:
+                    line = line.strip('\n')
+                    if line == "(require 'init-xterm)":
+                        line = ";;(require 'init-xterm)"
+                    file.write(line + "\n")
+                file.flush()
+                file.close()
+            runCommandE("mkdir -p /root/tmp/obj/")
+            os.chdir("/usr/include")
+            runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
+            os.chdir("/usr/src")
+            runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
+            os.chdir("/usr/local/include")
+            runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
+            os.chdir("/root/tmp")
+            runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/init-local.el -O - | cat > /root/.emacs.d/lisp/init-local.el")
         #em alias
-        runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/emacsalias -O - | cat > /usr/local/bin/em")
-        runCommandE("chmod +x /usr/local/bin/em")
+            runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/emacsalias -O - | cat > /usr/local/bin/em")
+            runCommandE("chmod +x /usr/local/bin/em")
 
     #vim
-    if vim == 1:
+    if vim == 1 and update == 0:
         runCommandE("git clone https://github.com/DamZiobro/vim-ide")
         os.chdir("./vim-ide/")
         cmd = "./installVim.sh"
@@ -261,7 +271,7 @@ if __name__ == "__main__" :
         os.chdir("/root/tmp/")
 
     #shadowsocks
-    if shadowsocks == 1:
+    if shadowsocks == 1 and update == 0:
         runCommandE("pip install shadowsocks")
         runCommandE("mkdir -p /etc/shadowsocks/")
         print("plz input server , port , passwd of ss(/etc/shadowsocks/ss.json)")
@@ -303,30 +313,31 @@ WantedBy=multi-user.target"""
 
         print("usage:systemctl start/stop/reload ssc")
 
-    #default editor
-    file = open("/root/.zshrc" , "a")
-    while 1:
-        editor = raw_input("""default editor:
+    if update == 0:
+        #default editor
+        file = open("/root/.zshrc" , "a")
+        while 1:
+            editor = raw_input("""default editor:
 1)vim
 2)emacs
 > """)
-        if editor == '1' or editor == 'vim':
-            runCommandE("git config --global core.editor vim")
-            file.write('export EDITOR="vim"')
-            break
-        elif editor == '2' or editor == 'emacs':
-            runCommandE("git config --global core.editor em")
-            file.write('export EDITOR="em"')
-            break
-        elif editor == '\n' or editor == '':
-            print("keep default")
-            break
-        else:
-            print("input error")
-            continue
-    file.flush()
-    file.close()
+            if editor == '1' or editor == 'vim':
+                runCommandE("git config --global core.editor vim")
+                file.write('export EDITOR="vim"')
+                break
+            elif editor == '2' or editor == 'emacs':
+                runCommandE("git config --global core.editor em")
+                file.write('export EDITOR="em"')
+                break
+            elif editor == '\n' or editor == '':
+                print("keep default")
+                break
+            else:
+                print("input error")
+                continue
+        file.flush()
+        file.close()
 
-    runCommand("systemctl reload ssh")
-    runCommand("systemctl start ssh")
-    runCommand("systemctl restart ssh")
+        runCommand("systemctl reload ssh")
+        runCommand("systemctl start ssh")
+        runCommand("systemctl restart ssh")
