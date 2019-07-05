@@ -79,3 +79,5 @@ chmod +x install.py
 | finda                  | find / -name $@                                             |
 | findc                  | find . -name $@                                             |
 | /root/tmp              | nfs目录                                                    |
+| netstats               | netstat -anp                                                |
+| sshcopyid              | ssh-copy-id -i /root/.ssh/ip_rsa.pub root@$@                |
