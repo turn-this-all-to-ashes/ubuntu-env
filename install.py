@@ -73,6 +73,9 @@ def zsh():
     file.flush()
     file.close()
 
+def addtan(input):
+    return "\t" + str(input)+"\n"
+
 if __name__ == "__main__" :
 
     vim = 0
@@ -160,7 +163,33 @@ if __name__ == "__main__" :
         runCommandE("chown -R ftp:ftp /root/nfs/ftp")
 
     #gitconfig
-    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gitconfig -O - | cat > /root/.gitconfig")
+    if update == 0:
+        (ret , output) = commands.getstatusoutput("hostname")
+        if not ret == 0:
+            runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gitconfig -O - | cat > /root/.gitconfig")
+        else:
+            email = output.strip() + "@example.com"
+            file = open("./tmpgitconfig.tmp" , "w")
+            file.write("[user]\n")
+            file.write(addtan(email))
+            file.write(addtan(output.strip()))
+            file.write("[alias]\n")
+            file.write(addtan("co = checkout"))
+            file.write(addtan("ss = status"))
+            file.write(addtan("cm = commit -m"))
+            file.write(addtan("br = branch"))
+            file.write(addtan("bm = branch -m"))
+            file.write(addtan("cb = checkout -b"))
+            file.write(addtan("df = diff"))
+            file.write(addtan("ls = log --stat"))
+            file.write(addtan("lp = log -p"))
+            file.write(addtan("plo = pull origin"))
+            file.write(addtan("plod = pull origin dev"))
+            file.write(addtan("pho = push origin"))
+            file.flush()
+            file.close()
+            runCommandE("mv ./tmpgitconfig.tmp /root/.gitconfig")
+
     #zsh
     if update == 0:
         ohmyzsh = "wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh"
