@@ -78,6 +78,30 @@ def addtan(input):
 
 if __name__ == "__main__" :
 
+    (ret , output )  = commands.getstatusoutput("lsb_release -a")
+    if not ret == 0:
+        print("get distributor failed")
+        sys.exit()
+    output = output.split("\n")
+    distributorID = ''
+    release = ''
+    for line in output:
+        if "Distributor ID" in line:
+            distributorID = (line.split(":"))[1].strip()
+        if "Release" in line:
+            release = (line.split(":"))[1].strip()
+
+    if distributorID == '' or release == '':
+        print("get distributor failed")
+        sys.exit()
+
+    if distributorID == 'Ubuntu':
+        release = float(release)
+        if release < 18.04:
+            print('ubuntu ' + str(release) + 'are not supported')
+            sys.exit()
+        pm = 'apt-get install -y '
+
     vim = 0
     emacs = 0
     shadowsocks = 0
@@ -86,8 +110,6 @@ if __name__ == "__main__" :
     nogolang = 0
     nomysql = 0
     update = 0
-
-    pm = 'apt-get install -y '
 
     for args in sys.argv:
         if args[0] == '-':
