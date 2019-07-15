@@ -1,2 +1,2 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env $SHELL
 grep $@ --colour=always| grep -v "grep" --colour=always| grep -v "/usr/local/bin/grepv" --colour=always
