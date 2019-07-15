@@ -259,6 +259,10 @@ if __name__ == "__main__" :
     if update == 0:
         runCommandE("pip install percol")
 
+    #add-gitignore
+    if update == 0:
+        runCommandE("pip install add-gitignore")
+
     #ssh key
     if update == 0:
         runCommandE("ssh-keygen -t rsa")
