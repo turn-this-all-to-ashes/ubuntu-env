@@ -51,6 +51,8 @@ chmod +x install.py
 | 命令                   | 介绍                                                        |
 | ---------------------- | ----------------------------------------------------------- |
 | j                      | autojump                                                    |
+| add-gitignore           | 自动生成gitignore的插件                                     |
+| fzf                     | 搜索器                                                      |
 | ctrl + p /ctrl + n     | 命令行历史搜索                                              |
 | tarx                   | tar zxvf                                                    |
 | tarc                   | tar zcvf                                                    |
