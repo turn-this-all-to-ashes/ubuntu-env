@@ -27,7 +27,7 @@ apt-get install -y python
 ```shell
 wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/install.py -O - | cat > install.py
 chmod +x install.py
-./install.py
+./install.py -v --no-rust --no-golang
 ```
 
 | 使用命令行参数指定安装细节 |             |
