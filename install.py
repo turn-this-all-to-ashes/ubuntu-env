@@ -72,6 +72,8 @@ def zsh():
     file.write(autojumpconf[0] + '\n')
     file.flush()
     file.close()
+    runCommandE("git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf")
+    runCommandE("~/.fzf/install")
 
 def addtan(input):
     return "\t" + str(input)+"\n"
@@ -164,7 +166,7 @@ if __name__ == "__main__" :
             file.close()
 
     #packages
-    packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ,'rar' , 'p7zip' , 'sqlite' , 'curlftpfs' , 'vsftpd']
+    packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ,'rar' , 'p7zip' , 'sqlite' , 'curlftpfs' , 'vsftpd' , 'cloc']
     installPackage( pm , packages)
     if emacs == 1:
         packages = ['emacs-nox' ,]
