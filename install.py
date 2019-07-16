@@ -292,6 +292,7 @@ if __name__ == "__main__" :
         runCommandE('echo "source ~/.local/bin/bashmarks.sh" >> ~/.zprofile')
         os.chdir('/root/tmp')
         runCommandE('rm -rf bashmarks')
+        runCommandE("sed -i 's/function d {/function dmark/g' ~/.local/bin/bashmarks.sh")
 
     #bd
     if update == 0:
