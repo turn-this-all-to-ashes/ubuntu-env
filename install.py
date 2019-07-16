@@ -112,6 +112,7 @@ if __name__ == "__main__" :
     nogolang = 0
     nomysql = 0
     update = 0
+    bashhub = 0
 
     for args in sys.argv:
         if args[0] == '-':
@@ -139,6 +140,9 @@ if __name__ == "__main__" :
                     nogolang = 1
                 if 'no-mysql' in args :
                     nomysql = 1
+                if 'bashhub' in args:
+                    bashhub = 1
+
     if len(sys.argv) == 1:
         emacs = 1
         vim =1
@@ -166,7 +170,7 @@ if __name__ == "__main__" :
             file.close()
 
     #packages
-    packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' , 'perl' ,'rar' , 'p7zip' , 'sqlite' , 'curlftpfs' , 'vsftpd' , 'cloc']
+    packages = ['wget' , 'curl' , 'gcc' , 'g++', 'gdb' ,'git', 'zsh' ,'vim' , 'screen' ,'tree' , 'manpages-posix manpages-posix-dev','htop','zip' , 'tmux','cmake' ,'automake' ,'autoconf'  , 'ctags' , 'global' , 'python-pip' , 'python' , 'python3' ,'python3-pip', 'perl' ,'rar' , 'p7zip' , 'sqlite' , 'curlftpfs' , 'vsftpd' , 'cloc' , 'ack-grep' , 'silversearcher-ag' , 'direnv' , 'googler']
     installPackage( pm , packages)
     if emacs == 1:
         packages = ['emacs-nox' ,]
@@ -262,6 +266,52 @@ if __name__ == "__main__" :
     #add-gitignore
     if update == 0:
         runCommandE("pip install add-gitignore")
+
+    #ad
+    if update == 0:
+        runCommandE("pip3 install advance-touch")
+
+    #autoenv
+    if update == 0:
+        runCommandE("pip install autoenv")
+        runCommandE('echo "source `which activate.sh`" >> ~/.zshrc')
+
+    #commandcd
+    if update == 0:
+        runCommandE('curl -sSL https://github.com/shyiko/commacd/raw/v1.0.0/commacd.sh -o ~/.commacd.sh &&  echo "source ~/.commacd.sh" >> ~/.zshrc')
+    #bashhub
+    if bashhub == 1:
+        runCommandE("curl -OL https://bashhub.com/setup && zsh setup")
+        runCommandE('rm -rf setup')
+
+    #bashmark
+    if update == 0:
+        runCommandE('git clone git://github.com/huyng/bashmarks.git')
+        os.chdir('bashmarks')
+        runCommandE('make install')
+        runCommandE('echo "source ~/.local/bin/bashmarks.sh" >> ~/.zprofile')
+        os.chdir('/root/tmp')
+        runCommandE('rm -rf bashmarks')
+
+    #bd
+    if update == 0:
+        runCommandE('wget --no-check-certificate -O /usr/local/bin/bd https://raw.github.com/vigneshwaranr/bd/master/bd')
+        runCommandE('chmod +rx /usr/local/bin/bd')
+        runCommadnE('''echo 'alias bd=". bd -si"' >> ~/.zshrc''')
+
+    #desk
+    if update == 0:
+        runCommandE('curl https://raw.githubusercontent.com/jamesob/desk/master/desk > /usr/local/bin/desk')
+        runCommandE('chmod +x /usr/local/bin/desk')
+
+    #fd
+    if update == 0:
+        (ret , output) = commands.getstatusoutput("uname -a")
+        if ret:
+            if 'x86_64' in output:
+                runCommandE('wget https://github.com/sharkdp/fd/releases/download/v7.3.0/fd_7.3.0_amd64.deb')
+                runCommandE('dpkg -i fd_7.3.0_amd64.deb')
+                runCommandE('rm -rf fd_7.3.0_amd64.deb')
 
     #ssh key
     if update == 0:
