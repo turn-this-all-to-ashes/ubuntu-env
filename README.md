@@ -50,18 +50,18 @@ chmod +x install.py
 
 | 命令                   | 介绍                                                        |
 | ---------------------- | ----------------------------------------------------------- |
-| j                      | autojump                                                    |
-| add-gitignore           | 自动生成gitignore的插件                                     |
-| fzf                     | 搜索器                                                      |
-| ctrl + p /ctrl + n     | 命令行历史搜索                                              |
-| tarx                   | tar zxvf                                                    |
-| tarc                   | tar zcvf                                                    |
-| sctl                   | systemctl                                                   |
-| sctlstart              | systemctl start                                             |
-| sctlreload             | systemctl reload                                            |
-| sctlstop               | systemctl stop                                              |
-| sctlrestart            | systemctl restart                                           |
-| rmd                    | rm -rf                                                      |
+| j                      | <https://github.com/wting/autojump>                          |
+| add-gitignore           | <https://github.com/fanny/add-gitignore> |
+| fzf                     | <https://github.com/junegunn/fzf>                     |
+| ctrl + p /ctrl + n     | <https://github.com/zsh-users/zsh-history-substring-search> |
+| tarx(alias)         | tar zxvf                                                    |
+| tarc(alias)            | tar zcvf                                                    |
+| sctl(alias)         | systemctl                                                   |
+| sctlstart(alias)       | systemctl start                                             |
+| sctlreload(alias)      | systemctl reload                                            |
+| sctlstop(alias)   | systemctl stop                                              |
+| sctlrestart(alias)     | systemctl restart                                           |
+| rmd(alias)             | rm -rf                                                      |
 | sctlstart/sctlstop ssc | 开启/关闭shadowsocks(配置文件位置:/etc/shadowsocks/ss.json) |
 | git co                 | git checkout                                                |
 | git ss                 | git status                                                  |
@@ -83,6 +83,21 @@ chmod +x install.py
 | finda                  | find / -name $@                                             |
 | findc                  | find . -name $@                                             |
 | /root/nfs              | nfs目录                                                    |
-| /root/nfs              | ftp目录,可以再windows下直接挂载网络位置,或在linux下使用curlftpfs挂载  |                                     
+| /root/nfs              | ftp目录,可以再windows下直接挂载网络位置,或在linux下使用curlftpfs挂载  |
 | netstats               | netstat -anp                                                |
 | sshcopyid              | ssh-copy-id -i /root/.ssh/ip_rsa.pub root@$@                |
+| s/g/dmark/l | <https://github.com/huyng/bashmarks> |
+| ad | <https://github.com/tanrax/terminal-AdvancedNewFile> |
+| autoenv | <https://github.com/kennethreitz/autoenv> |
+| bd | <https://github.com/vigneshwaranr/bd> |
+| , | <https://github.com/shyiko/commacd> |
+| desk | <https://github.com/jamesob/desk> |
+| direnv | <https://github.com/direnv/direnv> |
+| fd | <https://github.com/sharkdp/fd> |
+| percol | <https://github.com/mooz/percol> |
+| googler | <https://github.com/jarun/googler> |
+| cloc | <https://github.com/AlDanial/cloc> |
+| ack | <https://github.com/petdance/ack2> |
+| ag | <https://github.com/ggreer/the_silver_searcher> |
+| curlftpfs | <http://curlftpfs.sourceforge.net/> |
+
