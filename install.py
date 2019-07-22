@@ -199,8 +199,8 @@ if __name__ == "__main__" :
             email = output.strip() + "@example.com"
             file = open("./tmpgitconfig.tmp" , "w")
             file.write("[user]\n")
-            file.write(addtan(email))
-            file.write(addtan(output.strip()))
+            file.write(addtan("email = "+ email))
+            file.write(addtan("name = " + output.strip()))
             file.write("[alias]\n")
             file.write(addtan("co = checkout"))
             file.write(addtan("ss = status"))
