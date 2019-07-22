@@ -221,7 +221,7 @@ if __name__ == "__main__" :
     #zsh
     if update == 0:
         ohmyzsh = "wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh"
-        runCommandE(ohmyzsh)
+        runCommand(ohmyzsh)
         (ret , output) = commands.getstatusoutput("which zsh")
         if not ret == 0:
             runCommandE("chsh -s /usr/bin/zsh" )
@@ -261,34 +261,34 @@ if __name__ == "__main__" :
 
     #percol
     if update == 0:
-        runCommandE("pip install percol")
+        runCommand("pip install percol")
 
     #add-gitignore
     if update == 0:
-        runCommandE("pip install add-gitignore")
+        runCommand("pip install add-gitignore")
 
     #ad
     if update == 0:
-        runCommandE("pip3 install advance-touch")
+        runCommand("pip3 install advance-touch")
 
     #autoenv
     if update == 0:
-        runCommandE("pip install autoenv")
+        runCommand("pip install autoenv")
         runCommandE('echo "source `which activate.sh`" >> ~/.zshrc')
 
     #commandcd
     if update == 0:
-        runCommandE('curl -sSL https://github.com/shyiko/commacd/raw/v1.0.0/commacd.sh -o ~/.commacd.sh &&  echo "source ~/.commacd.sh" >> ~/.zshrc')
+        runCommand('curl -sSL https://github.com/shyiko/commacd/raw/v1.0.0/commacd.sh -o ~/.commacd.sh &&  echo "source ~/.commacd.sh" >> ~/.zshrc')
     #bashhub
     if bashhub == 1:
-        runCommandE("curl -OL https://bashhub.com/setup && zsh setup")
+        runCommand("curl -OL https://bashhub.com/setup && zsh setup")
         runCommandE('rm -rf setup')
 
     #bashmark
     if update == 0:
         runCommandE('git clone git://github.com/huyng/bashmarks.git')
         os.chdir('bashmarks')
-        runCommandE('make install')
+        runCommand('make install')
         runCommandE('echo "source ~/.local/bin/bashmarks.sh" >> ~/.zprofile')
         os.chdir('/root/tmp')
         runCommandE('rm -rf bashmarks')
@@ -311,7 +311,7 @@ if __name__ == "__main__" :
         if ret:
             if 'x86_64' in output:
                 runCommandE('wget https://github.com/sharkdp/fd/releases/download/v7.3.0/fd_7.3.0_amd64.deb')
-                runCommandE('dpkg -i fd_7.3.0_amd64.deb')
+                runCommand('dpkg -i fd_7.3.0_amd64.deb')
                 runCommandE('rm -rf fd_7.3.0_amd64.deb')
 
     #ssh key
@@ -409,7 +409,7 @@ if __name__ == "__main__" :
 
     #shadowsocks
     if shadowsocks == 1 and update == 0:
-        runCommandE("pip install shadowsocks")
+        runCommand("pip install shadowsocks")
         runCommandE("mkdir -p /etc/shadowsocks/")
         print("plz input server , port , passwd of ss(/etc/shadowsocks/ss.json)")
         server = raw_input("server address:\n")
