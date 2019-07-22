@@ -1,4 +1,4 @@
-#!/usr/bin/env $SHELL
+#!/usr/bin/env zsh
 pg emacsclient > /dev/null 2>&1
 if [ $? -ne 0 ]
 then

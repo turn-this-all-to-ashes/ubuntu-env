@@ -1,2 +1,2 @@
-#!/usr/bin/env $SHELL
+#!/usr/bin/env zsh
 grep -rn $@
