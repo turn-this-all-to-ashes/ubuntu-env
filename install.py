@@ -56,7 +56,7 @@ def zsh():
             continue
         if line[8] == '[' or line[8] == 'a':
             autojumpconf.append(line)
-    os.chdir("/root/tmp")
+    os.chdir(home + "/tmp")
     runCommandE("rm -rf ./autojump")
     
     #autosuggestions
@@ -66,8 +66,8 @@ def zsh():
     #history-substring-search
     runCommandE("git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search")
     #.zshrc
-    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/zshrc -O - | cat > /root/.zshrc")
-    file = open("/root/.zshrc" , "a")
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/zshrc -O - | cat > " + home + "/.zshrc")
+    file = open(home + "/.zshrc" , "a")
     file.write(autojumpconf[1] + '\n')
     file.write(autojumpconf[0] + '\n')
     file.flush()
@@ -79,7 +79,6 @@ def addtan(input):
     return "\t" + str(input)+"\n"
 
 if __name__ == "__main__" :
-
     (ret , output )  = commands.getstatusoutput("lsb_release -a")
     if not ret == 0:
         print("get distributor failed")
@@ -104,6 +103,7 @@ if __name__ == "__main__" :
             sys.exit()
         pm = 'apt-get install -y '
 
+    home = (os.environ['HOME']).strip()
     vim = 0
     emacs = 0
     shadowsocks = 0
@@ -149,9 +149,9 @@ if __name__ == "__main__" :
         shadowsocks = 1
 
     if update == 0:
-        runCommandE("mkdir -p /root/tmp")
-        os.chdir("/root/tmp")
-        runCommandE("mkdir -p /root/nfs/ftp")
+        runCommandE("mkdir -p " +home + "/tmp")
+        os.chdir(home+"/tmp")
+        runCommandE("mkdir -p " + home + "/nfs/ftp")
 
     #ssh
     if update == 0:
@@ -188,13 +188,13 @@ if __name__ == "__main__" :
 
     #chown nfs/ftp
     if update == 0:
-        runCommandE("chown -R ftp:ftp /root/nfs/ftp")
+        runCommandE("chown -R ftp:ftp " + home + "/nfs/ftp")
 
     #gitconfig
     if update == 0:
         (ret , output) = commands.getstatusoutput("hostname")
         if not ret == 0:
-            runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gitconfig -O - | cat > /root/.gitconfig")
+            runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gitconfig -O - | cat > "+ home + "/.gitconfig")
         else:
             email = output.strip() + "@example.com"
             file = open("./tmpgitconfig.tmp" , "w")
@@ -216,7 +216,7 @@ if __name__ == "__main__" :
             file.write(addtan("pho = push origin"))
             file.flush()
             file.close()
-            runCommandE("mv ./tmpgitconfig.tmp /root/.gitconfig")
+            runCommandE("mv ./tmpgitconfig.tmp " + home + "/.gitconfig")
 
     #zsh
     if update == 0:
@@ -228,6 +228,18 @@ if __name__ == "__main__" :
         else:
             runCommandE("chsh -s " + output.strip())
         zsh()
+        file = open(home + "/.zshrc" , "r")
+        content = file.read()
+        content = content.split("\n")
+        file.close()
+        file = open(home+ "/.zshrc" , "w")
+        for line in content:
+            if 'export ZSH="/root/.oh-my-zsh"' in line:
+                file.write('export ZSH="' + home + '/.oh-my-zsh"\n')
+                continue
+            file.write(line + '\n')
+        file.flush()
+        file.close()
 
     #alias
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/cdls -O - | cat > /usr/local/bin/cdls")
@@ -257,6 +269,10 @@ if __name__ == "__main__" :
     #vsftpd
     if update == 0:
         runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/vsftpd -O - | cat > /etc/vsftpd.conf")
+        file = open("/etc/vsftpd.conf" , "a")
+        file.write("anon_root="+ home + "/nfs")
+        file.flush()
+        file.close()
         runCommandE("systemctl restart vsftpd")
 
     #percol
@@ -290,7 +306,7 @@ if __name__ == "__main__" :
         os.chdir('bashmarks')
         runCommand('make install')
         runCommandE('echo "source ~/.local/bin/bashmarks.sh" >> ~/.zprofile')
-        os.chdir('/root/tmp')
+        os.chdir(home + '/tmp')
         runCommandE('rm -rf bashmarks')
         runCommandE("sed -i 's/function d {/function dmark/g' ~/.local/bin/bashmarks.sh")
 
@@ -326,7 +342,7 @@ if __name__ == "__main__" :
             p.wait()
             if p.returncode != 0 :
                 print("install rust failed")
-            file = open("/root/.zprofile" , "a")
+            file = open(home + "/.zprofile" , "a")
             file.write('export PATH="$HOME/.cargo/bin:$PATH"\n')
             file.flush()
             file.close()
@@ -351,10 +367,10 @@ if __name__ == "__main__" :
                         network= networktmp
             if auto == 1:
                 network = network.split('.')
-                network = 'echo "/root/nfs ' + network[0] + "." + network[1]+ "." + network[2] + ".0/24" + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
+                network = 'echo "' + home + '/nfs ' + network[0] + "." + network[1]+ "." + network[2] + ".0/24" + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
             else:
                 network = raw_input("input nfs network(e.g. 192.168.0.0/24) :\n")
-                network = 'echo "/root/nfs ' + network + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
+                network = 'echo "'+ home + '/nfs ' + network + '(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports'
             runCommandE(network)
             runCommandE("exportfs -a")
             runCommandE("systemctl restart nfs-kernel-server")
@@ -369,10 +385,10 @@ if __name__ == "__main__" :
     if update == 0:
         if emacs == 1:
             runCommandE("git clone https://github.com/purcell/emacs.d.git ~/.emacs.d")
-            runCommandE("cp /root/.emacs.d/init.el /root/.emacs.d/init.el.bak")
-            with open("/root/.emacs.d/init.el.bak" , "r") as file:
+            runCommandE("cp "+ home + "/.emacs.d/init.el "+home +"/.emacs.d/init.el.bak")
+            with open(home + "/.emacs.d/init.el.bak" , "r") as file:
                 lines = file.readlines()
-                file = open("/root/.emacs.d/init.el" , "w")
+                file = open(home + "/.emacs.d/init.el" , "w")
                 for line in lines:
                     line = line.strip('\n')
                     if line == "(require 'init-xterm)":
@@ -380,15 +396,15 @@ if __name__ == "__main__" :
                     file.write(line + "\n")
                 file.flush()
                 file.close()
-            runCommandE("mkdir -p /root/tmp/obj/")
+            runCommandE("mkdir -p "+ home + "/tmp/obj/")
             os.chdir("/usr/include")
             runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
             os.chdir("/usr/src")
             runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
             os.chdir("/usr/local/include")
             runCommandE("MAKEOBJDIRPREFIX=~/tmp/obj gtags --objdir")
-            os.chdir("/root/tmp")
-            runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/init-local.el -O - | cat > /root/.emacs.d/lisp/init-local.el")
+            os.chdir(home + "/tmp")
+            runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/init-local.el -O - | cat > " + home + "/.emacs.d/lisp/init-local.el")
         #em alias
             runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/emacsalias -O - | cat > /usr/local/bin/em")
             runCommandE("chmod +x /usr/local/bin/em")
@@ -404,7 +420,7 @@ if __name__ == "__main__" :
         p.wait()
         if p.returncode != 0 :
             print("set up vim failed")
-        os.chdir("/root/tmp/")
+        os.chdir(home + "/tmp/")
         runCommands("rm -rf ./vim-ide")
 
     #shadowsocks
@@ -452,7 +468,7 @@ WantedBy=multi-user.target"""
 
     if update == 0:
         #default editor
-        file = open("/root/.zshrc" , "a")
+        file = open(home + "/.zshrc" , "a")
         while 1:
             editor = raw_input("""default editor:
 1)vim
