@@ -5,44 +5,67 @@ import commands
 import os
 import subprocess
 
+class colors:
+    BLACK         = '\033[0;30m'
+    DARK_GRAY     = '\033[1;30m'
+    LIGHT_GRAY    = '\033[0;37m'
+    BLUE          = '\033[0;34m'
+    LIGHT_BLUE    = '\033[1;34m'
+    GREEN         = '\033[0;32m'
+    LIGHT_GREEN   = '\033[1;32m'
+    CYAN          = '\033[0;36m'
+    LIGHT_CYAN    = '\033[1;36m'
+    RED           = '\033[0;31m'
+    LIGHT_RED     = '\033[1;31m'
+    PURPLE        = '\033[0;35m'
+    LIGHT_PURPLE  = '\033[1;35m'
+    BROWN         = '\033[0;33m'
+    YELLOW        = '\033[1;33m'
+    WHITE         = '\033[1;37m'
+    DEFAULT_COLOR = '\033[00m'
+    RED_BOLD      = '\033[01;31m'
+    ENDC          = '\033[0m'
 
 def installPackage(pm , packages):
     for package in packages:
         print("")
-        print(str(pm+package))
+        print(colors.YELLOW + str(pm+package)+ colors.ENDC)
         p = subprocess.Popen(str(pm+package) , shell = True )
         p.wait()
         if not p.returncode == 0:
-            print("install " + package+" failed")
+            print(colors.RED +"install " + package+" failed"+colors.ENDC)
+        print(colors.GREEN + "install " + package + " succeed" + colors.ENDC)
         print("")
     return 0
 
 def runCommandE(command):
     print("")
-    print(command)
+    print(colors.YELLOW+ command+colors.ENDC)
     p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
-        print("run "+command + " failed")
+        print(colors.RED+"run "+command + " failed"+colors.ENDC)
         print("")
         sys.exit()
+    print(colors.GREEN + "run " + command + " succeed" + colors.ENDC)
     print("")
     return p.returncode
 
 def runCommand(command):
     print("")
-    print(command)
+    print(colors.YELLOW + command + colors.ENDC)
     p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
-        print("run "+command + " failed")
+        print(colors.RED + "run "+command + " failed" +colors.ENDC)
         print("")
+    print(colors.GREEN + "run " + command + " succeed" + colors.ENDC)
     print("")
     return p.returncode
 
 def zsh():
     #autojump
-    runCommandE("git clone git://github.com/wting/autojump.git")
+    runCommand("git clone git://github.com/wting/autojump.git")
     os.chdir("./autojump")
     (ret , output) = commands.getstatusoutput("./install.py")
     if not ret == 0:
@@ -60,14 +83,15 @@ def zsh():
     runCommandE("rm -rf ./autojump")
     
     #autosuggestions
-    runCommandE("git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions")
+    runCommand("git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions")
     #highlighting
-    runCommandE("git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting")
+    runCommand("git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting")
     #history-substring-search
-    runCommandE("git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search")
+    runCommand("git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search")
     #.zshrc
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/zshrc -O - | cat > " + home + "/.zshrc")
     file = open(home + "/.zshrc" , "a")
+    file.write('\n')
     file.write(autojumpconf[0] + '\n')
     file.write(autojumpconf[1] + '\n')
     file.flush()
@@ -302,7 +326,7 @@ if __name__ == "__main__" :
 
     #bashmark
     if update == 0:
-        runCommandE('git clone git://github.com/huyng/bashmarks.git')
+        runCommand('git clone git://github.com/huyng/bashmarks.git')
         os.chdir('bashmarks')
         runCommand('make install')
         runCommandE('echo "source ~/.local/bin/bashmarks.sh" >> ~/.zprofile')
@@ -384,7 +408,7 @@ if __name__ == "__main__" :
     #emacs
     if update == 0:
         if emacs == 1:
-            runCommandE("git clone https://github.com/purcell/emacs.d.git ~/.emacs.d")
+            runCommand("git clone https://github.com/purcell/emacs.d.git ~/.emacs.d")
             runCommandE("cp "+ home + "/.emacs.d/init.el "+home +"/.emacs.d/init.el.bak")
             with open(home + "/.emacs.d/init.el.bak" , "r") as file:
                 lines = file.readlines()
@@ -413,7 +437,7 @@ if __name__ == "__main__" :
 
     #vim
     if vim == 1 and update == 0:
-        runCommandE("git clone https://github.com/DamZiobro/vim-ide")
+        runCommand("git clone https://github.com/DamZiobro/vim-ide")
         os.chdir("./vim-ide/")
         cmd = "./installVim.sh"
         p = subprocess.Popen(cmd , shell = True)
