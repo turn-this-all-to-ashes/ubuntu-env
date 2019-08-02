@@ -52,9 +52,9 @@ def zsh():
     output= output.split('\n')
     autojumpconf= []
     for line in output:
-        if not line[0] == ' ':
+        if len(line) == 0:
             continue
-        if line[8] == '[' or line[8] == 'a':
+        if '[[' in line or 'autoload -U ' in line:
             autojumpconf.append(line)
     os.chdir(home + "/tmp")
     runCommandE("rm -rf ./autojump")
