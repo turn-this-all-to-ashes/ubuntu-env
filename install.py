@@ -29,7 +29,7 @@ class colors:
 def installPackage(pm , packages):
     for package in packages:
         print("")
-        print(colors.YELLOW + str(pm+package)+ colors.ENDC)
+        print(colors.PURPLE + str(pm+package)+ colors.ENDC)
         p = subprocess.Popen(str(pm+package) , shell = True )
         p.wait()
         if not p.returncode == 0:
@@ -40,7 +40,7 @@ def installPackage(pm , packages):
 
 def runCommandE(command):
     print("")
-    print(colors.YELLOW+ command+colors.ENDC)
+    print(colors.PURPLE+ command+colors.ENDC)
     p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
@@ -53,7 +53,7 @@ def runCommandE(command):
 
 def runCommand(command):
     print("")
-    print(colors.YELLOW + command + colors.ENDC)
+    print(colors.PURPLE + command + colors.ENDC)
     p = subprocess.Popen(command , shell = True )
     p.wait()
     if not p.returncode == 0:
