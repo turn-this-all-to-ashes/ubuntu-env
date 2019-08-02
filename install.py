@@ -54,7 +54,7 @@ def zsh():
     for line in output:
         if len(line) == 0:
             continue
-        if '[[' in line or 'autoload -U ' in line:
+        if '[[' in line or 'autoload' in line:
             autojumpconf.append(line)
     os.chdir(home + "/tmp")
     runCommandE("rm -rf ./autojump")
@@ -68,8 +68,8 @@ def zsh():
     #.zshrc
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/zshrc -O - | cat > " + home + "/.zshrc")
     file = open(home + "/.zshrc" , "a")
-    file.write(autojumpconf[1] + '\n')
     file.write(autojumpconf[0] + '\n')
+    file.write(autojumpconf[1] + '\n')
     file.flush()
     file.close()
     runCommandE("git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf")
@@ -314,7 +314,7 @@ if __name__ == "__main__" :
     if update == 0:
         runCommandE('wget --no-check-certificate -O /usr/local/bin/bd https://raw.github.com/vigneshwaranr/bd/master/bd')
         runCommandE('chmod +rx /usr/local/bin/bd')
-        runCommadnE('''echo 'alias bd=". bd -si"' >> ~/.zshrc''')
+        runCommandE('''echo 'alias bd=". bd -si"' >> ~/.zshrc''')
 
     #desk
     if update == 0:
