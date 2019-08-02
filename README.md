@@ -4,18 +4,6 @@
 
 安装前先配置好网络环境(ip dns等)
 
-设置root用户密码 : 
-
-```shell
-sudo passwd root
-```
-
-切换至root用户
-
-```shell
-su - root
-```
-
 手动安装python
 
 ```shell
