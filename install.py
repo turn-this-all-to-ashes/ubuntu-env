@@ -308,7 +308,7 @@ if __name__ == "__main__" :
         runCommandE('echo "source ~/.local/bin/bashmarks.sh" >> ~/.zprofile')
         os.chdir(home + '/tmp')
         runCommandE('rm -rf bashmarks')
-        runCommandE("sed -i 's/function d {/function dmark/g' ~/.local/bin/bashmarks.sh")
+        runCommandE("sed -i 's/function d {/function dmark {/g' ~/.local/bin/bashmarks.sh")
 
     #bd
     if update == 0:
@@ -421,7 +421,7 @@ if __name__ == "__main__" :
         if p.returncode != 0 :
             print("set up vim failed")
         os.chdir(home + "/tmp/")
-        runCommands("rm -rf ./vim-ide")
+        runCommand("rm -rf ./vim-ide")
 
     #shadowsocks
     if shadowsocks == 1 and update == 0:
