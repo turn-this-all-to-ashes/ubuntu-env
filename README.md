@@ -18,7 +18,7 @@ chmod +x install.py
 ./install.py -v --no-rust --no-golang
 ```
 
-若使用费root用户安装  使用sudo执行安装脚本. 并在安装结束后手动执行以下命令, 其中user为当前用户:
+若使用`非root`用户安装  使用`sudo`执行安装脚本. 并在安装结束后手动执行以下命令, 其中`user`为当前用户:
 ```
 sudo chown -R user:user /home/user
 sudo chown -R ftp:ftp /home/user/nfs/ftp
