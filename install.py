@@ -128,6 +128,8 @@ if __name__ == "__main__" :
         pm = 'apt-get install -y '
 
     home = (os.environ['HOME']).strip()
+    user = home.split('/')[-1]
+
     vim = 0
     emacs = 0
     shadowsocks = 0
@@ -210,10 +212,6 @@ if __name__ == "__main__" :
         runCommand('apt-get update')
         installPackage(pm , packages )
 
-    #chown nfs/ftp
-    if update == 0:
-        runCommandE("chown -R ftp:ftp " + home + "/nfs/ftp")
-
     #gitconfig
     if update == 0:
         (ret , output) = commands.getstatusoutput("hostname")
@@ -247,10 +245,11 @@ if __name__ == "__main__" :
         ohmyzsh = "wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh"
         runCommand(ohmyzsh)
         (ret , output) = commands.getstatusoutput("which zsh")
+        zshpos=''
         if not ret == 0:
-            runCommandE("chsh -s /usr/bin/zsh" )
+            zshpos = "/usr/bin/zsh"
         else:
-            runCommandE("chsh -s " + output.strip())
+            zshpos = output.strip()
         zsh()
         file = open(home + "/.zshrc" , "r")
         content = file.read()
@@ -514,6 +513,26 @@ WantedBy=multi-user.target"""
                 continue
         file.flush()
         file.close()
+
+        file = open('/etc/passwd' , 'r')
+        content = file.read()
+        file.close()
+        file = open('/etc/passwd' , 'w')
+        for line in content.split('\n'):
+            if user in line:
+                line = line.split(':')
+                line[-1] = zshpos
+                t = ''
+                for a in line:
+                    t += a + ':'
+                t = t[:-1]
+                file.write(t+ '\n')
+            file.write(line + '\n')
+        file.flush()
+        file.close()
+
+        runCommandE("chown -R " + user +':' + user + ' ' + home )
+        runCommandE("chown -R ftp:ftp " + home + "/nfs/ftp")
 
         runCommandE("systemctl restart cron")
         runCommand("systemctl restart ssh")
