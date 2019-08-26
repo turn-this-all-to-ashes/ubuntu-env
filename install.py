@@ -289,6 +289,9 @@ if __name__ == "__main__" :
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/sshcopyid -O - | cat > /usr/local/bin/sshcopyid")
     runCommandE("chmod +x /usr/local/bin/sshcopyid")
 
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gk -O - | cat > /usr/local/bin/gk")
+    runCommandE("chmod +x /usr/local/bin/gk")
+
     #vsftpd
     if update == 0:
         runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/vsftpd -O - | cat > /etc/vsftpd.conf")
