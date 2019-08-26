@@ -1,0 +1,2 @@
+#!/usr/bin/env zsh
+pg $@ | awk '{print $2}' | xargs kill -9
