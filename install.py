@@ -292,6 +292,9 @@ if __name__ == "__main__" :
     runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/gk -O - | cat > /usr/local/bin/grepkill")
     runCommandE("chmod +x /usr/local/bin/grepkill")
 
+    runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/llg -O - | cat > /usr/local/bin/llg")
+    runCommandE("chmod +x /usr/local/bin/llg")
+
     #vsftpd
     if update == 0:
         runCommandE("wget https://github.com/turn-this-all-to-ashes/ubuntu-env/raw/master/vsftpd -O - | cat > /etc/vsftpd.conf")
